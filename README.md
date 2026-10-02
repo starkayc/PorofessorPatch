@@ -1,42 +1,37 @@
 # PorofessorPatch
 
-A small tool that removes the ad from Porofessor Standalone's Home window.
+Removes ads from [Porofessor](https://porofessor.gg) Standalone.
+
+## Screenshots
+
+![Light mode](assets/light.png)
+
+![Dark mode](assets/dark.png)
 
 ## What it does
 
-Porofessor shows an ad to everyone who is not a premium user. This tool turns on the same saved flags that a premium account would set, so Porofessor stops adding the ad. Nothing is deleted, nothing is patched, and the app itself is never modified.
+Porofessor shows an ad to everyone who isn't a premium user. PorofessorPatch
+turns on the same saved flags a premium account would set, so Porofessor stops
+showing the ad. Nothing is deleted, nothing is patched, and the app itself is
+never modified. You only run it once — the flags survive app updates.
 
-You only need to run it once. The flags live in Porofessor's own saved data and survive app updates.
+The window has a status indicator, the Porofessor install location, and two
+buttons:
 
-When you open it you get a simple menu:
+- **Patch — Remove Ads**
+- **Uninstall — Restore Ads**
 
-1. Patch Porofessor. Removes the ad. Close Porofessor first.
-2. Check patch status. Shows whether the patch is active.
-3. Uninstall patch. Brings the ad back.
-0. Exit
-
-If you prefer the command line, the same actions are available as:
-
-```text
-PorofessorPatch.exe --patch     Apply the patch
-PorofessorPatch.exe --check     Show the current state, changes nothing
-PorofessorPatch.exe --restore   Undo the patch
-PorofessorPatch.exe --version   Print the tool version
-```
-
-## How it does it
-
-Porofessor decides whether to show the ad by reading two saved values called `isPremium` and `isOWPremium`. This tool writes those values directly into Porofessor's own saved data. That is why it needs no admin rights and touches no app files. When Porofessor starts it reads the values, sees a premium user, and skips the ad.
+Click the Porofessor mascot to switch between light and dark mode.
 
 ## Building from source
 
-You need Node.js 20 or newer.
+Requires the .NET SDK (8.0 or newer):
 
 ```sh
-npm install
-npm run build
+dotnet build src/PorofessorPatch/PorofessorPatch.csproj -c Release
 ```
 
-This creates `dist/PorofessorPatch.exe`. It is a single file with no installer and no other requirements.
+Output: `src/PorofessorPatch/bin/Release/net48/PorofessorPatch.exe` (a single
+native exe, ~600 KB, for Windows 10/11).
 
-Releases are built from source by GitHub Actions and ship with a sha256 checksum.
+Releases are built by GitHub Actions and ship with a sha256 checksum.

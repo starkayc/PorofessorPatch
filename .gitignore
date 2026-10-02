@@ -1,9 +1,11 @@
-# Build output and runtime data
-node_modules/
-dist/
+# Build output
+src/**/bin/
+src/**/obj/
+.vs/
+
+# Local dev tools (gitignored by design)
 work/
-backups/
 *.log
 
-# Personal session notes (local paths, patch history) — not part of the tool
-porofessor-adblock-plan.md
+# Internal design notes (not shipped)
+.notes/

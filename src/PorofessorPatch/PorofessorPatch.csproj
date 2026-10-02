@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>PorofessorPatch</AssemblyName>
+    <RootNamespace>PorofessorPatch</RootNamespace>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <Version>2.0.0</Version>
+    <Product>Porofessor Patch Tool</Product>
+    <AssemblyTitle>Porofessor Patch Tool</AssemblyTitle>
+    <Description>Removes ads from Porofessor Standalone.</Description>
+    <Copyright>Open source (MIT)</Copyright>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

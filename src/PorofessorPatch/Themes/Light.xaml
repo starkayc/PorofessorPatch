@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Light theme (Apple-inspired) -->
+    <SolidColorBrush x:Key="WindowBg" Color="#F5F5F7" />
+    <SolidColorBrush x:Key="CardBg" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CardBorder" Color="#E5E5EA" />
+    <SolidColorBrush x:Key="TextPrimary" Color="#1D1D1F" />
+    <SolidColorBrush x:Key="TextSecondary" Color="#86868B" />
+    <SolidColorBrush x:Key="ControlBg" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ControlBorder" Color="#D2D2D7" />
+    <SolidColorBrush x:Key="IconFg" Color="#1D1D1F" />
+    <SolidColorBrush x:Key="IconHover" Color="#E5E5EA" />
+    <SolidColorBrush x:Key="IconPressed" Color="#D8D8DE" />
+    <SolidColorBrush x:Key="Accent" Color="#34C759" />
+    <SolidColorBrush x:Key="AccentHover" Color="#2DB84E" />
+    <SolidColorBrush x:Key="AccentPressed" Color="#28A745" />
+    <SolidColorBrush x:Key="Danger" Color="#FF3B30" />
+    <SolidColorBrush x:Key="DangerHover" Color="#FFE5E3" />
+    <SolidColorBrush x:Key="DangerPressed" Color="#FFD1CF" />
+
+</ResourceDictionary>
