@@ -6,7 +6,7 @@ namespace PorofessorPatch.Core
     internal static class AppInfo
     {
         public const string Name = "PorofessorPatch";
-        public const string Version = "2.0.0";
+        public const string Version = "2.1.0";
     }
 
     internal static class Paths
