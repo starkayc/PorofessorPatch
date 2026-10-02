@@ -23,6 +23,13 @@ buttons:
 
 Click the Porofessor mascot to switch between light and dark mode.
 
+## Requirements
+
+The app is a single .NET Framework 4.8 executable. That runtime is preinstalled
+on Windows 10 (version 1903 and newer) and Windows 11, so no extra install is
+needed there. On older Windows versions, install the
+[.NET Framework 4.8 runtime](https://dotnet.microsoft.com/download/dotnet-framework/net48).
+
 ## Building from source
 
 Requires the .NET SDK (8.0 or newer):

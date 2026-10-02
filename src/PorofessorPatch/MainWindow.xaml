@@ -15,7 +15,7 @@
         <!-- Feather-style icon geometries (24x24 stroke icons) -->
         <Geometry x:Key="RefreshGeometry">M 23 4 L 23 10 L 17 10 M 20.49 15 A 9 9 0 1 1 18.37 5.64 L 23 10</Geometry>
         <Geometry x:Key="FolderGeometry">M 22 19 A 2 2 0 0 1 20 21 H 4 A 2 2 0 0 1 2 19 V 5 A 2 2 0 0 1 4 3 H 9 L 11 6 H 20 A 2 2 0 0 1 22 8 Z</Geometry>
-        <Geometry x:Key="TrashGeometry">M 3 6 L 5 6 L 21 6 M 19 6 V 20 A 2 2 0 0 1 17 22 H 7 A 2 2 0 0 1 5 20 V 6 M 8 6 V 4 A 2 2 0 0 1 10 2 H 14 A 2 2 0 0 1 16 4 V 6 M 10 11 L 10 17 M 14 11 L 14 17</Geometry>
+        <Geometry x:Key="DatabaseGeometry">M 4 7 C 4 5 7 4 12 4 C 17 4 20 5 20 7 L 20 17 C 20 19 17 20 12 20 C 7 20 4 19 4 17 Z M 4 7 C 4 9 7 10 12 10 C 17 10 20 9 20 7 M 4 12 C 4 14 7 15 12 15 C 17 15 20 14 20 12</Geometry>
         <Geometry x:Key="ChevronGeometry">M 6 9 L 12 15 L 18 9</Geometry>
 
         <!-- Primary action (solid accent) -->
@@ -266,20 +266,28 @@
                     Content="Uninstall — Restore Ads" Click="Restore_Click" />
         </StackPanel>
 
-        <!-- Log / details -->
+        <!-- Status / details -->
         <Border Grid.Row="4" Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource CardBorder}"
                 BorderThickness="1" CornerRadius="12">
             <Grid>
-                <TextBox x:Name="LogBox" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                         Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="12.5"
-                         Foreground="{DynamicResource TextPrimary}" Padding="14,12,14,44" />
-                <Button x:Name="ClearButton" Style="{StaticResource IconButton}"
-                        ToolTip="Clear logs" HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        Margin="0,0,8,8" Click="ClearLogs_Click">
-                    <Path Data="{StaticResource TrashGeometry}" Width="18" Height="18" Stretch="Uniform"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
-                </Button>
+                <RichTextBox x:Name="LogBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                             Background="Transparent" BorderThickness="0"
+                             Foreground="{DynamicResource TextPrimary}" Padding="14,12,14,44" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Margin="0,0,8,8">
+                    <Button x:Name="OpenDatabaseButton" Style="{StaticResource IconButton}"
+                            ToolTip="Open database location" Click="OpenDatabase_Click" Margin="0,0,4,0">
+                        <Path Data="{StaticResource DatabaseGeometry}" Width="18" Height="18" Stretch="Uniform"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    </Button>
+                    <Button x:Name="OpenBackupsButton" Style="{StaticResource IconButton}"
+                            ToolTip="Open backups folder" Click="OpenBackups_Click">
+                        <Path Data="{StaticResource FolderGeometry}" Width="18" Height="18" Stretch="Uniform"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

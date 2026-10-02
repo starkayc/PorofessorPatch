@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,8 +16,8 @@ namespace PorofessorPatch
     {
         private readonly List<Install> _installs = new List<Install>();
         private bool _dark;
-        private string _actionLog = string.Empty;
-        private string _statusSummary = string.Empty;
+        private CheckResult _lastCheck;
+        private string _lastBackup;
 
         private static readonly Color Green = (Color)ColorConverter.ConvertFromString("#34C759");
         private static readonly Color Amber = (Color)ColorConverter.ConvertFromString("#FF9F0A");
@@ -63,6 +65,7 @@ namespace PorofessorPatch
             {
                 Source = new Uri("pack://application:,,,/Themes/" + (_dark ? "Dark" : "Light") + ".xaml"),
             });
+            RenderStatus();
         }
 
         private void RefreshInstalls()
@@ -75,9 +78,8 @@ namespace PorofessorPatch
                 InstallList.ItemsSource = _installs;
                 if (_installs.Count > 0) InstallList.SelectedIndex = 0;
             }
-            catch (Exception ex)
+            catch
             {
-                AppendLog("error = " + ex.Message);
             }
         }
 
@@ -88,51 +90,96 @@ namespace PorofessorPatch
             StatusDot.Fill = new SolidColorBrush(color);
         }
 
-        private void AppendLog(string text)
-        {
-            _actionLog += text + Environment.NewLine;
-            RenderLog();
-        }
-
         private void RefreshStatus()
         {
-            CheckResult r;
             try
             {
-                r = PatchEngine.Check();
+                _lastCheck = PatchEngine.Check();
             }
-            catch (Exception ex)
+            catch
             {
-                r = new CheckResult { Running = PatchEngine.IsAppRunning(), StorageDir = Paths.StorageDir };
-                AppendLog("error = " + ex.Message);
+                _lastCheck = new CheckResult
+                {
+                    Running = PatchEngine.IsAppRunning(),
+                    StorageDir = Paths.StorageDir,
+                };
             }
 
-            if (r.Running)
+            if (_lastCheck.Running)
                 SetStatus("Porofessor is running — close it to patch", Amber);
-            else if (!r.StorageExists)
+            else if (!_lastCheck.StorageExists)
                 SetStatus("No data yet — launch Porofessor once", Amber);
-            else if (r.AdsRemoved)
-                SetStatus("Ads removed", Green);
+            else if (_lastCheck.AdsRemoved)
+                SetStatus("Ads Removed", Green);
             else
-                SetStatus("Ads present", Red);
+                SetStatus("Ads Present", Red);
 
-            _statusSummary =
-                "Porofessor Status: " + (r.Running ? "Running" : "Not Running") + Environment.NewLine +
-                "Database Location: " + r.StorageDir + Environment.NewLine +
-                "Backups: " + Paths.BackupsRoot + Environment.NewLine +
-                "Patched: " + (r.AdsRemoved ? "Yes" : "No") + Environment.NewLine +
-                "  Porofessor Premium: " + (r.PorofessorPremium ? "Yes" : "No") + Environment.NewLine +
-                "  Overwolf Premium: " + (r.OverwolfPremium ? "Yes" : "No");
-
-            RenderLog();
+            RenderStatus();
         }
 
-        private void RenderLog()
+        private void RenderStatus()
         {
-            LogBox.Text = string.IsNullOrEmpty(_actionLog)
-                ? _statusSummary
-                : _actionLog + Environment.NewLine + _statusSummary;
-            LogBox.ScrollToEnd();
+            var r = _lastCheck;
+            var doc = new FlowDocument
+            {
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 12.5,
+                PagePadding = new Thickness(0),
+            };
+
+            AddLine(doc, "Porofessor Status: ", r.Running ? "Running" : "Not Running",
+                new SolidColorBrush(r.Running ? Amber : Green));
+
+            if (r.Running)
+            {
+                AddLine(doc, "Patch Status: ", "Unknown", new SolidColorBrush(Amber));
+                AddLine(doc, "  Porofessor Premium: ", "Unknown", new SolidColorBrush(Amber));
+                AddLine(doc, "  Overwolf Premium: ", "Unknown", new SolidColorBrush(Amber));
+            }
+            else
+            {
+                AddLine(doc, "Patch Status: ", r.AdsRemoved ? "Ads Removed" : "Ads Present",
+                    new SolidColorBrush(r.AdsRemoved ? Green : Red));
+                AddLine(doc, "  Porofessor Premium: ", r.PorofessorPremium ? "Yes" : "No", null);
+                AddLine(doc, "  Overwolf Premium: ", r.OverwolfPremium ? "Yes" : "No", null);
+            }
+
+            LogBox.Document = doc;
+        }
+
+        private static void AddLine(FlowDocument doc, string label, string value, Brush valueBrush)
+        {
+            var p = new Paragraph { Margin = new Thickness(0) };
+            p.Inlines.Add(new Run(label));
+            var run = new Run(value);
+            if (valueBrush != null) run.Foreground = valueBrush;
+            p.Inlines.Add(run);
+            doc.Blocks.Add(p);
+        }
+
+        private static void OpenFolder(string path)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = path,
+                UseShellExecute = true,
+            });
+        }
+
+        private void OpenDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            if (Directory.Exists(Paths.StorageDir))
+                OpenFolder(Paths.StorageDir);
+            else
+                MessageBox.Show(this, "Porofessor's storage isn't created yet — launch Porofessor once.",
+                    AppInfo.Name, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void OpenBackups_Click(object sender, RoutedEventArgs e)
+        {
+            var dir = string.IsNullOrEmpty(_lastBackup) ? Paths.BackupsRoot : _lastBackup;
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            OpenFolder(dir);
         }
 
         private void Patch_Click(object sender, RoutedEventArgs e)
@@ -150,14 +197,11 @@ namespace PorofessorPatch
             try
             {
                 var r = action();
-                AppendLog(r.Message);
-                foreach (var line in r.Written) AppendLog("  " + line);
-                if (!string.IsNullOrEmpty(r.BackupPath)) AppendLog("backup = " + r.BackupPath);
+                if (!string.IsNullOrEmpty(r.BackupPath)) _lastBackup = r.BackupPath;
                 RefreshStatus();
             }
             catch (Exception ex)
             {
-                AppendLog("error = " + ex.Message);
                 MessageBox.Show(this, ex.Message, AppInfo.Name, MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -185,12 +229,6 @@ namespace PorofessorPatch
             InstallList.ItemsSource = _installs;
             InstallList.SelectedIndex = 0;
             RefreshStatus();
-        }
-
-        private void ClearLogs_Click(object sender, RoutedEventArgs e)
-        {
-            _actionLog = string.Empty;
-            RenderLog();
         }
     }
 }

@@ -27,10 +27,7 @@ namespace PorofessorPatch.Core
             }
         }
 
-        public static string BackupsRoot => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "PorofessorPatch",
-            "backups");
+        public static string BackupsRoot => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "backups");
 
         public static string MakeBackupDir()
         {
